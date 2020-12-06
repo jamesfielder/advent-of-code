@@ -17,19 +17,13 @@ object DayFour extends TaskApp with Utils {
 
   override def run(args: List[String]): Task[ExitCode] =
     (for {
-      _ <- part1
-      _ <- part2
+      _ <- program(part1Validator, "part 1")
+      _ <- program(validatePassport, "part 2")
     } yield ()).as(ExitCode.Success)
 
-  def part1 =
-    lines
-      .filter(part1Validator)
-      .compile.toList.map(p => println("part 1: " + p.size))
-
-  def part2 =
-    lines
-      .filter(validatePassport)
-      .compile.toList.map(p => println("part 2: " + p.size))
+  def program(validator: Map[String, String] => Boolean, message: String): Task[Unit] =
+    lines.filter(validator)
+      .compile.toList.map(p => println(message + ": " + p.size))
 
   def part1Validator(passport: Map[String, String]): Boolean =
     required.forall(passport.keys.toList.contains(_))
