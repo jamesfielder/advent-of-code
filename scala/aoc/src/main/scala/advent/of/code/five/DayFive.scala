@@ -9,6 +9,7 @@ import advent.of.code.utils.Utils
 import cats.effect.ExitCode
 import cats.implicits._
 import monix.eval.{Task, TaskApp}
+import fs2._
 
 case class Seat(row: Int, column: Int) {
   def id: Int = (row * 8) + column
@@ -19,7 +20,12 @@ object DayFive extends TaskApp with Utils {
     (part2 *> part1)
       .map(println(_)).as(ExitCode.Success)
 
-  def part2 = {
+  def part1: Task[Int] =
+    parseBoardingCards
+      .map(_.id)
+      .compile.toList.map(_.max)
+
+  def part2: Task[IndexedSeq[Unit]] = {
     seatIds.map(seats => {
       val min = seats.map(_._2).min
       val max = seats.map(_._2).max
@@ -29,18 +35,15 @@ object DayFive extends TaskApp with Utils {
     })
   }
 
-  def seatIds =
-    readFileStream("files/5.txt")
-      .map(passToSeat)
+  def seatIds: Task[List[(Seat, Int)]] =
+    parseBoardingCards
       .map(s => (s, s.id))
       .compile.toList.map(_.sortBy(_._2))
 
 
-  def part1 =
+  def parseBoardingCards: Stream[Task, Seat] =
     readFileStream("files/5.txt")
       .map(passToSeat)
-      .map(_.id)
-      .compile.toList.map(_.max)
 
   def passToSeat(boardingPass: String): Seat = Seat.tupled(
     boardingPass.splitAt(7).bimap(
