@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package advent.of.code.one
+package advent.of.code.solutions
 
 import advent.of.code.utils.Utils
 import cats.effect.ExitCode
@@ -16,7 +16,9 @@ object DayOne extends TaskApp with Utils {
       .map(l => {
         (l.combinations(2) ++ l.combinations(3)).filter(_.sum == 2020).map(_.product).toList
       })
-      .flatMap(_.traverse(o => Task { println(o) }))
+      .flatMap(_.traverse(o => Task {
+        println(o)
+      }))
       .as(ExitCode.Success)
   }
 

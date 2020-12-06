@@ -3,14 +3,14 @@
  * All rights reserved.
  */
 
-package advent.of.code.two
+package advent.of.code.solutions
 
-import advent.of.code.two.DayTwo.{Password, Rule}
+import DayTwo.{Password, Rule}
 import advent.of.code.utils.Utils
 import cats.effect.ExitCode
 import cats.parse.{Numbers, Parser, Parser1}
-import monix.eval.{Task, TaskApp}
 import fs2._
+import monix.eval.{Task, TaskApp}
 
 object DayTwo extends TaskApp with Utils {
 

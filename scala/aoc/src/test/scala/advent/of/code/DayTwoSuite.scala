@@ -3,9 +3,10 @@
  * All rights reserved.
  */
 
-package advent.of.code.two
+package advent.of.code
 
-import advent.of.code.two.DayTwo._
+import advent.of.code.solutions.DayTwo._
+import advent.of.code.solutions.{DayTwo, DayTwoParser}
 import advent.of.code.utils.Utils
 
 class DayTwoSuite extends munit.FunSuite with Utils {

@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package advent.of.code.four
+package advent.of.code.solutions
 
 import advent.of.code.utils.Utils
 import cats.effect.ExitCode

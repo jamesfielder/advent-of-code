@@ -3,7 +3,9 @@
  * All rights reserved.
  */
 
-package advent.of.code.five
+package advent.of.code
+
+import advent.of.code.solutions.{DayFive, Seat}
 
 class BoardingPassParserSpec extends munit.FunSuite {
   test("First example") {

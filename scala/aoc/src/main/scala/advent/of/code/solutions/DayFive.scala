@@ -3,13 +3,13 @@
  * All rights reserved.
  */
 
-package advent.of.code.five
+package advent.of.code.solutions
 
 import advent.of.code.utils.Utils
 import cats.effect.ExitCode
 import cats.implicits._
-import monix.eval.{Task, TaskApp}
 import fs2._
+import monix.eval.{Task, TaskApp}
 
 case class Seat(row: Int, column: Int) {
   def id: Int = (row * 8) + column
