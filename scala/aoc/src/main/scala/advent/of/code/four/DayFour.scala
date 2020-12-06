@@ -28,7 +28,7 @@ object DayFour extends TaskApp with Utils {
 
   def part2 =
     lines
-      .filter(validatePassword)
+      .filter(validatePassport)
       .compile.toList.map(p => println("part 2: " + p.size))
 
   def part1Validator(passport: Map[String, String]): Boolean =
@@ -53,8 +53,8 @@ object Validators {
 
   type Validator = String => Boolean
 
-  def validatePassword(password: Map[String, String]): Boolean = {
-    val filtered = password.filter(p => part2Validator.keys.toList.contains(p._1))
+  def validatePassport(passport: Map[String, String]): Boolean = {
+    val filtered = passport.filter(p => part2Validator.keys.toList.contains(p._1))
 
     filtered.keys.size == 7 && filtered.forall { case (k, v) => part2Validator(k).apply(v) }
   }
