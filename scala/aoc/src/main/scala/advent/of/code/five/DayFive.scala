@@ -39,8 +39,7 @@ object DayFive extends TaskApp with Utils {
     parseBoardingCards
       .map(s => (s, s.id))
       .compile.toList.map(_.sortBy(_._2))
-
-
+  
   def parseBoardingCards: Stream[Task, Seat] =
     readFileStream("files/5.txt")
       .map(passToSeat)
