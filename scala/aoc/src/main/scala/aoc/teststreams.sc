@@ -1,5 +1,5 @@
 import fs2._
-import advent.of.code.utils.Utils
+import aoc.utils.Utils
 import cats.effect.ExitCode
 import monix.eval.{Task, TaskApp}
 

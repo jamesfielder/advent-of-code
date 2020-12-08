@@ -3,9 +3,9 @@
  * All rights reserved.
  */
 
-package advent.of.code
+package aoc
 
-import advent.of.code.solutions.{Pos, Row}
+import aoc.solutions.{Pos, Row}
 import munit.ScalaCheckSuite
 import org.scalacheck.Gen
 import org.scalacheck.Gen.nonEmptyListOf

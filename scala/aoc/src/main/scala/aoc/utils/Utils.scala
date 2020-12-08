@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package advent.of.code.utils
+package aoc.utils
 
 import cats.effect.{Blocker, ContextShift, Sync}
 import fs2._

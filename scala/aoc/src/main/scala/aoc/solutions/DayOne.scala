@@ -3,12 +3,12 @@
  * All rights reserved.
  */
 
-package advent.of.code.solutions
+package aoc.solutions
 
-import advent.of.code.utils.Utils
+import aoc.utils.Utils
 import cats.effect.ExitCode
-import cats.implicits._
 import monix.eval.{Task, TaskApp}
+import cats.implicits._
 
 object DayOne extends TaskApp with Utils {
   override def run(args: List[String]): Task[ExitCode] = {

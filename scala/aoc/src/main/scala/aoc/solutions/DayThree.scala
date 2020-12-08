@@ -3,9 +3,9 @@
  * All rights reserved.
  */
 
-package advent.of.code.solutions
+package aoc.solutions
 
-import advent.of.code.utils.Utils
+import aoc.utils.Utils
 import cats.data.NonEmptyList
 import cats.effect.ExitCode
 import monix.eval.{Task, TaskApp}

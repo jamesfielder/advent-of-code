@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package advent.of.code
+package aoc
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.scalacheck.Checkers

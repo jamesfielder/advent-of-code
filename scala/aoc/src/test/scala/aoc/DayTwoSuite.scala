@@ -3,11 +3,11 @@
  * All rights reserved.
  */
 
-package advent.of.code
+package aoc
 
-import advent.of.code.solutions.DayTwo._
-import advent.of.code.solutions.{DayTwo, DayTwoParser}
-import advent.of.code.utils.Utils
+import solutions.DayTwo._
+import solutions.{DayTwo, DayTwoParser}
+import utils.Utils
 
 class DayTwoSuite extends munit.FunSuite with Utils {
 

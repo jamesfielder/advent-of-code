@@ -3,10 +3,10 @@
  * All rights reserved.
  */
 
-package advent.of.code.solutions
+package aoc.solutions
 
 import DayTwo.{Password, Rule}
-import advent.of.code.utils.Utils
+import aoc.utils.Utils
 import cats.effect.ExitCode
 import cats.parse.{Numbers, Parser, Parser1}
 import fs2._
