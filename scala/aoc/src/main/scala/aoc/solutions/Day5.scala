@@ -15,7 +15,7 @@ case class Seat(row: Int, column: Int) {
   def id: Int = (row * 8) + column
 }
 
-object DayFive extends TaskApp with FileUtils {
+object Day5 extends TaskApp with FileUtils {
   override def run(args: List[String]): Task[ExitCode] =
     (part2 *> part1)
       .map(println(_)).as(ExitCode.Success)

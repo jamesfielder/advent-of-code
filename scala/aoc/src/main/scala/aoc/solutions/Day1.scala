@@ -10,7 +10,7 @@ import cats.effect.ExitCode
 import monix.eval.{Task, TaskApp}
 import cats.implicits._
 
-object DayOne extends TaskApp with FileUtils {
+object Day1 extends TaskApp with FileUtils {
   override def run(args: List[String]): Task[ExitCode] = {
     readFile()
       .map(l => {

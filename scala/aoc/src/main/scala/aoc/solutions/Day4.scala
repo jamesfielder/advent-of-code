@@ -9,7 +9,7 @@ import aoc.utils.FileUtils
 import cats.effect.ExitCode
 import monix.eval.{Task, TaskApp}
 
-object DayFour extends TaskApp with FileUtils {
+object Day4 extends TaskApp with FileUtils {
 
   import Validators._
 

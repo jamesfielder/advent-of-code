@@ -5,11 +5,11 @@
 
 package aoc
 
-import solutions.DayTwo._
-import solutions.{DayTwo, DayTwoParser}
+import solutions.Day2._
+import solutions.{Day2, DayTwoParser}
 import utils.FileUtils
 
-class DayTwoSuite extends munit.FunSuite with FileUtils {
+class Day2Suite extends munit.FunSuite with FileUtils {
 
   test("Parse a rule") {
     val rule = "10-11 f"
@@ -21,14 +21,14 @@ class DayTwoSuite extends munit.FunSuite with FileUtils {
   test("Parse one line") {
     val line = "1-3 k: kskk"
     val expected = Right(Password(Rule(1, 3, 'k'), "kskk"))
-    assertEquals(DayTwo.parseLine(line), expected)
+    assertEquals(Day2.parseLine(line), expected)
   }
 
   test("Parse another line") {
     val line = "2-3 f: nvffq"
     val expected = Right(Password(Rule(2, 3, 'f'), "nvffq"))
 
-    assertEquals(DayTwo.parseLine(line), expected)
+    assertEquals(Day2.parseLine(line), expected)
   }
 
   test("Validate Password") {
@@ -48,21 +48,21 @@ class DayTwoSuite extends munit.FunSuite with FileUtils {
 
   test("Part 2 testing") {
     val line = "1-3 a: abcde"
-    val password = DayTwo.parseLine(line).getOrElse(throw new Exception())
+    val password = Day2.parseLine(line).getOrElse(throw new Exception())
 
     assertEquals(validatePasswordPart2(password), true)
   }
 
   test("Part 2 another") {
     val line = "1-3 b: cdefg"
-    val password = DayTwo.parseLine(line).getOrElse(throw new Exception())
+    val password = Day2.parseLine(line).getOrElse(throw new Exception())
 
     assertEquals(validatePasswordPart2(password), false)
   }
 
   test("Part 2 another another") {
     val line = "2-9 c: ccccccccc"
-    val password = DayTwo.parseLine(line).getOrElse(throw new Exception())
+    val password = Day2.parseLine(line).getOrElse(throw new Exception())
 
     assertEquals(validatePasswordPart2(password), false)
   }

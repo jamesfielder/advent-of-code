@@ -5,10 +5,10 @@
 
 package aoc
 
-import solutions.{DayFive, Seat}
+import solutions.{Day5, Seat}
 
 class BoardingPassParserSpec extends munit.FunSuite {
   test("First example") {
-    assertEquals(DayFive.passToSeat("FBFBBFFRLR"), Seat(44, 5))
+    assertEquals(Day5.passToSeat("FBFBBFFRLR"), Seat(44, 5))
   }
 }

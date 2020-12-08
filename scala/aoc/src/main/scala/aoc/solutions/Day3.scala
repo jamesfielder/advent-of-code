@@ -12,7 +12,7 @@ import monix.eval.{Task, TaskApp}
 import scala.util.chaining._
 import fs2._
 
-object DayThree extends TaskApp with FileUtils {
+object Day3 extends TaskApp with FileUtils {
 
   case class Slope(right: Int, down: Int)
 

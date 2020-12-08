@@ -6,7 +6,7 @@
 package aoc
 
 import aoc.solutions.{B, Bag, BagRule}
-import aoc.solutions.DaySeven._
+import aoc.solutions.Day7._
 
 class BagRuleCountSpec extends munit.FunSuite {
   test("one bag") {
