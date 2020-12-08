@@ -1,5 +1,5 @@
 import fs2._
-import aoc.utils.Utils
+import aoc.utils.FileUtils
 import cats.effect.ExitCode
 import monix.eval.{Task, TaskApp}
 
@@ -7,7 +7,7 @@ import scala.collection.View.Empty.toMap
 
 Stream(1, 2, 3).chunkN(2, allowFewer = false).take(2).map(_.last).collect{ case Some(i) => i}.toList
 
-object Tester extends TaskApp with Utils {
+object Tester extends TaskApp with FileUtils {
   override def run(args: List[String]): Task[ExitCode] = ???
 
   def readFour = readFileStream("C:\\Users\\jcfie\\code\\advent-of-code\\scala\\files\\4.txt")

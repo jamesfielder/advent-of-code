@@ -9,6 +9,7 @@ import aoc.solutions.{B, Bag, BagRule}
 
 class BagParserSpec extends munit.FunSuite {
   import solutions.DaySevenParser._
+  import utils.ParserExtras._
 
   test("parses a bag correctly") {
     val testBag = " light red bags contain 1 bright white bag, 2 muted yellow bags."

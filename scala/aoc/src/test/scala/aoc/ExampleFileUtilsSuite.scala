@@ -8,6 +8,6 @@ package aoc
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.scalacheck.Checkers
 
-class ExampleUtilsSuite extends AnyFunSuite with Checkers {
+class ExampleFileUtilsSuite extends AnyFunSuite with Checkers {
 
 }

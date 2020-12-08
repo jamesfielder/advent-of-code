@@ -5,7 +5,7 @@
 
 package aoc.solutions
 
-import aoc.utils.Utils
+import aoc.utils.FileUtils
 import cats.effect.ExitCode
 import cats.implicits._
 import fs2._
@@ -15,7 +15,7 @@ case class Seat(row: Int, column: Int) {
   def id: Int = (row * 8) + column
 }
 
-object DayFive extends TaskApp with Utils {
+object DayFive extends TaskApp with FileUtils {
   override def run(args: List[String]): Task[ExitCode] =
     (part2 *> part1)
       .map(println(_)).as(ExitCode.Success)

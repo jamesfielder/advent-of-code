@@ -9,7 +9,7 @@ import cats.effect.{Blocker, ContextShift, Sync}
 import fs2._
 import java.nio.file.Paths
 
-trait Utils {
+trait FileUtils {
 
   def readFilesToInt[F[_] : Sync](path: String)(implicit cs: ContextShift[F]): Stream[F, Int] =
     readFileStream(path).map(_.toInt)

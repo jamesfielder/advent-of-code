@@ -6,13 +6,13 @@
 package aoc.solutions
 
 import DayTwo.{Password, Rule}
-import aoc.utils.Utils
+import aoc.utils.FileUtils
 import cats.effect.ExitCode
 import cats.parse.{Numbers, Parser, Parser1}
 import fs2._
 import monix.eval.{Task, TaskApp}
 
-object DayTwo extends TaskApp with Utils {
+object DayTwo extends TaskApp with FileUtils {
 
   case class Rule(min: Int, max: Int, letter: Char)
 

@@ -7,9 +7,9 @@ package aoc
 
 import solutions.DayTwo._
 import solutions.{DayTwo, DayTwoParser}
-import utils.Utils
+import utils.FileUtils
 
-class DayTwoSuite extends munit.FunSuite with Utils {
+class DayTwoSuite extends munit.FunSuite with FileUtils {
 
   test("Parse a rule") {
     val rule = "10-11 f"

@@ -5,11 +5,11 @@
 
 package aoc.solutions
 
-import aoc.utils.Utils
+import aoc.utils.FileUtils
 import cats.effect.ExitCode
 import monix.eval.{Task, TaskApp}
 
-object DayFour extends TaskApp with Utils {
+object DayFour extends TaskApp with FileUtils {
 
   import Validators._
 

@@ -5,12 +5,12 @@
 
 package aoc.solutions
 
-import aoc.utils.Utils
+import aoc.utils.FileUtils
 import cats.effect.ExitCode
 import cats.kernel.Monoid
 import monix.eval.{Task, TaskApp}
 
-object DaySix extends TaskApp with Utils {
+object DaySix extends TaskApp with FileUtils {
   override def run(args: List[String]): Task[ExitCode] =
     (part1 *> part2).as(ExitCode.Success)
 

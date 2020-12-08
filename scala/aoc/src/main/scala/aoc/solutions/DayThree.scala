@@ -5,14 +5,14 @@
 
 package aoc.solutions
 
-import aoc.utils.Utils
+import aoc.utils.FileUtils
 import cats.data.NonEmptyList
 import cats.effect.ExitCode
 import monix.eval.{Task, TaskApp}
 import scala.util.chaining._
 import fs2._
 
-object DayThree extends TaskApp with Utils {
+object DayThree extends TaskApp with FileUtils {
 
   case class Slope(right: Int, down: Int)
 
