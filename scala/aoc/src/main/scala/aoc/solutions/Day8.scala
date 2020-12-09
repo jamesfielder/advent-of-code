@@ -5,15 +5,17 @@
 
 package aoc.solutions
 
-import aoc.utils.FileUtils
+import aoc.utils.{FileUtils, TaskExt}
 import cats.effect.ExitCode
 import cats.parse.Numbers.nonNegativeIntString
 import cats.parse.{Parser, Parser1}
 import fs2._
 import monix.eval.{Task, TaskApp}
 
+import scala.util.Try
+
 object Day8 extends TaskApp with FileUtils {
-  override def run(args: List[String]): Task[ExitCode] = part1.as(ExitCode.Success)
+  override def run(args: List[String]): Task[ExitCode] = (part1 *> part2).as(ExitCode.Success)
 
   def part1 =
     (for {
@@ -22,21 +24,23 @@ object Day8 extends TaskApp with FileUtils {
       out <- part1Stream(init)
     } yield out).map(println(_))
 
-//  def part2 =
-//    (for {
-//      a <- asm
-//
-//    } yield ())
-//
-  def part2Task(asm: List[(Asm, Long)]) = Task.delay {
-    part1Stream(Recur(asm)).flatMap(p1 => {
-      Task.pure(p1).flatMapLoop((0L, 0L))((j, seed, s) => {
-         j match {
-           case (i, Instruction.nxt) => Task.now((i, seed._2))
-           case (i, _) => s()
-         }
-      })
-    })
+    def part2 =
+      (for {
+        a <- asm
+        out <- part2Task(addFinalIns(a))
+      } yield out).map(println(_))
+
+
+  def part2Task(asm: List[(Asm, Long)]) = Task.from {
+
+    def iterate: R2 => Task[R2] = (r2: R2) => Task.delay {
+      nextNopOrJmp(r2.lastChangedIndex, asm) match {
+        case None => part1Stream(Recur(asm)).map(r => R2(r._1, r2.lastChangedIndex, r._2, asm))
+        case Some(newIndex) => part1Stream(Recur(swapInsAt(newIndex, r2.asm))).map(r => R2(r._1, newIndex, r._2, asm))
+      }
+    }.flatten
+
+    TaskExt.iterate(R2(0L, 0L, Instruction.nop, asm))(r => r.lastInsExecuted != Instruction.nxt)(iterate)
   }
 
   def part1Stream(recur: Recur) =
@@ -60,7 +64,7 @@ object Day8 extends TaskApp with FileUtils {
       case (_, Instruction.nop) => Some(((r.acc, instruction), Recur(next, r.program, r.acc, r.seen :+ index)))
       case (_, Instruction.acc) => Some(((r.acc, instruction), Recur(next, r.program, r.acc + inc, r.seen :+ index)))
       case (_, Instruction.jmp) => Some(((r.acc, instruction), Recur(findInstruction(index + inc, r.program), r.program, r.acc, r.seen :+ index)))
-      case (_, Instruction.nxt) => None
+      case (_, Instruction.nxt) => Some(((r.acc, instruction), Recur(next, r.program, r.acc, r.seen :+ index)))
     }
   }
 
@@ -77,14 +81,16 @@ object Day8 extends TaskApp with FileUtils {
   }
 
   def findInstruction(j: Long, ins: List[(Asm, Long)]): (Asm, Long) =
-    ins.find { case (_, i) => i == j }.get
+    Try(ins.find { case (_, i) => i == j }.get).getOrElse(ins.maxBy(_._2))
 
-  def nextNopOrJmp(j: Long, ins: List[(Asm, Long)]): Long =
-    ins
-      .filter { case (ins, i) => (i > j) && Seq(Instruction.jmp, Instruction.nop).contains(ins) }
-      .head._2
+  def nextNopOrJmp(j: Long, ins: List[(Asm, Long)]): Option[Long] = {
+    val filtered = ins.filter { case (_, i) => (i > j) }
+      .filter(i => Seq(Instruction.jmp, Instruction.nop).contains(i._1.instruction))
 
-  def addFinalIns(ins: List[(Asm, Long)]) = {
+    if (filtered.isEmpty) None else Some(filtered.head._2)
+  }
+
+  def addFinalIns(ins: List[(Asm, Long)]): List[(Asm, Long)] = {
     val i = ins.map(_._2).max + 1
     ins :+ ((Asm(Instruction.nxt, 0), i))
   }
@@ -98,9 +104,11 @@ object Day8 extends TaskApp with FileUtils {
 
 case class Recur(current: (Asm, Long), program: List[(Asm, Long)], acc: Long, seen: List[Long])
 object Recur {
-  def apply(asm: List[(Asm, Long)]) =
-    Recur(asm.head, asm, 0L, List())
+  def apply(as: List[(Asm, Long)]): Recur =
+    Recur(as.head, as, 0L, List())
 }
+
+case class R2(lastAcc: Long, lastChangedIndex: Long, lastInsExecuted: Instruction, asm: List[(Asm, Long)])
 
 import enumeratum._
 
