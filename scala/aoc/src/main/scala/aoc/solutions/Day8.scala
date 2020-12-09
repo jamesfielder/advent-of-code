@@ -41,7 +41,6 @@ object Day8 extends TaskApp with FileUtils {
 
     TaskExt.iterate(R2(0L, 0L, Instruction.nop, asm))(r => r.lastInsExecuted != Instruction.nxt)(iterate)
   }
-
   def part1Stream(recur: Recur) =
     Stream.unfold(recur)(part1Interprieter)
       .covary[Task]
