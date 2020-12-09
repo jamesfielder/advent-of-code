@@ -18,7 +18,7 @@ object Day8 extends TaskApp with FileUtils {
   def part1 =
     (for {
       a <- asm
-      init = Recur(a.head, a, 0L, List.empty)
+      init = Recur(a)
       out <- part1Stream(init)
     } yield out).map(println(_))
 
@@ -28,11 +28,16 @@ object Day8 extends TaskApp with FileUtils {
 //
 //    } yield ())
 //
-//  def part2Task(asm: List[(Asm, Long)]) = Task.delay {
-//     Task.pure(Recur2(Recur(asm.head, asm, 0, List()), 0)).flatMapLoop((asm, 0))((a, b, c) => {
-//
-//     })
-//  }
+  def part2Task(asm: List[(Asm, Long)]) = Task.delay {
+    part1Stream(Recur(asm)).flatMap(p1 => {
+      Task.pure(p1).flatMapLoop((0L, 0L))((j, seed, s) => {
+         j match {
+           case (i, Instruction.nxt) => Task.now((i, seed._2))
+           case (i, _) => s()
+         }
+      })
+    })
+  }
 
   def part1Stream(recur: Recur) =
     Stream.unfold(recur)(part1Interprieter)
@@ -40,7 +45,7 @@ object Day8 extends TaskApp with FileUtils {
       .pull
       .last
       .flatMap(f => Pull.output1(f))
-      .stream.compile.toList
+      .stream.compile.toList.map(_.head.get)
 
   def part1Interprieter: Recur => Option[((Long, Instruction), Recur)] = (r: Recur) => {
     val op = r.current._1
@@ -92,8 +97,10 @@ object Day8 extends TaskApp with FileUtils {
 }
 
 case class Recur(current: (Asm, Long), program: List[(Asm, Long)], acc: Long, seen: List[Long])
-
-case class Recur2(r: Recur, lastChangedIndex: Long)
+object Recur {
+  def apply(asm: List[(Asm, Long)]) =
+    Recur(asm.head, asm, 0L, List())
+}
 
 import enumeratum._
 
