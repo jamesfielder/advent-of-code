@@ -26,12 +26,12 @@ class Day9(preamble: Int) extends readDay9 {
     (for {
       p1 <- part1
       p2 <- part2(p1)
-    } yield p2).map(println(_))
+    } yield p2).timed.map(println(_))
   }
 
   def part1(implicit input: List[Long]) = findInvalid.tapEval(p => Task(println(p)))
 
-  def findInvalid(implicit input: List[Long]) = windowed(preamble + 1).filter(checkdata(2, _)).debug().map(_.last).getLastValueAsTask
+  def findInvalid(implicit input: List[Long]) = windowed(preamble + 1).filter(checkdata(2, _)).map(_.last).getLastValueAsTask
 
   def part2(p1: Long)(implicit input: List[Long]) =
     for {
