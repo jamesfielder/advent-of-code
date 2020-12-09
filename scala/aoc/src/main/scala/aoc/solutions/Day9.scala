@@ -40,8 +40,6 @@ class Day9(preamble: Int) extends readDay9 {
 
   def windowed(n: Int)(implicit input: List[Long]) = Stream.emits(input).covary[Task].sliding(n).map(_.toList)
 
-  def windowedList(n: Int)(implicit input: List[Long]) = windowed(n).compile.toList
-
   def findData(groupSize: Int, nums: List[Long]): Option[List[Long]] = {
     val last = nums.last
     val sums = nums.init.combinations(groupSize).toList
