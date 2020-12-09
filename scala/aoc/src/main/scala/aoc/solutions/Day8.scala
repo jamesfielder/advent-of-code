@@ -24,12 +24,11 @@ object Day8 extends TaskApp with FileUtils {
       out <- part1Stream(init)
     } yield out).map(println(_))
 
-    def part2 =
-      (for {
-        a <- asm
-        out <- part2Task(addFinalIns(a))
-      } yield out).map(println(_))
-
+  def part2 =
+    (for {
+      a <- asm
+      out <- part2Task(addFinalIns(a))
+    } yield out).map(println(_))
 
   def part2Task(asm: List[(Asm, Long)]) = Task.from {
 
@@ -113,15 +112,11 @@ case class R2(lastAcc: Long, lastChangedIndex: Long, lastInsExecuted: Instructio
 import enumeratum._
 
 sealed trait Instruction extends EnumEntry
-
 object Instruction extends Enum[Instruction] {
 
   case object acc extends Instruction
-
   case object jmp extends Instruction
-
   case object nop extends Instruction
-
   case object nxt extends Instruction
 
   override def values: IndexedSeq[Instruction] = findValues
