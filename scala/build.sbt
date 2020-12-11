@@ -17,7 +17,7 @@ val ScalaCheckVersion = "1.15.1"
 val KindProjectorVersion = "0.11.2"
 val BetterMonadicForVersion = "0.3.1"
 val SilencerVersion = "1.7.0"
-val KittensVersion = "2.2.0"
+val KittensVersion = "2.2.1"
 val FS2Version = "2.4.6"
 val CatsParseVersion = "0.1.0"
 val EnumeratumVersion = "1.6.1"
@@ -45,6 +45,7 @@ lazy val sharedSettings = Seq(
   //
   // Turning off fatal warnings for doc generation
   scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
+  scalacOptions += "-Ymacro-annotations",
 
   addCompilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
@@ -89,6 +90,8 @@ lazy val aoc = project
       "co.fs2" %% "fs2-experimental" % FS2Version,
       "org.typelevel" %% "cats-parse" % CatsParseVersion,
       "com.beachape" %% "enumeratum" % EnumeratumVersion,
+      "com.beachape" %% "enumeratum-cats" % EnumeratumVersion,
+      "io.scalaland" %% "catnip" % "1.1.1",
       // For testing
       "org.scalatest" %% "scalatest" % ScalaTestVersion % Test,
       "org.scalatestplus" %% "scalacheck-1-14" % ScalaTestPlusVersion % Test,
