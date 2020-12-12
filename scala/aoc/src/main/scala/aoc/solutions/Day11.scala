@@ -10,6 +10,7 @@ import cats.implicits._
 import cats.kernel.Eq
 import io.scalaland.catnip._
 
+import scala.None
 import scala.util.Try
 //import aoc.utils.Stuff._
 import scala.io.Source
@@ -28,47 +29,62 @@ object Day11 extends App {
 //  println(p1.countOccupied)
   println(p2.countOccupied)
 
-//  def part1: Ferry = iterate(changeSeatPart1(_, start))
+  def part1: Ferry = iterate(changeSeatPart1, start)
 
-  def part2: Ferry = iterate(changeSeatPart2(_, start))
+  def part2: Ferry = iterate(changeSeatPart2, start)
 
-  def iterate(stepFn: Seat => Seat): Ferry =
+  def iterate(stepFn: Ferry => Seat => Seat, start: Ferry): Ferry =
     Iterator
-      .iterate(Recur(start, start.mapSeats(stepFn))) { r =>
+      .iterate(Recur(start, start.mapSeats(stepFn.apply(start)))) { r =>
         println(r.next)
-        Recur(r.next, r.next.mapSeats(changeSeatPart1(_, r.next)))
+        Recur(r.next, r.next.mapSeats(stepFn.apply(r.next)))
       }
       .find(f => f.last === f.next)
       .get
       .last
 
-  def changeSeatPart1(seat: Seat, f: Ferry, tolerance: Int = 4): Seat = {
-    val candidatePoints =
-      generateNeighbours(seat.asPoint)
-        .filter(n => n._1 < f.width && n._2 < f.length)
-        .filter(c => seat.asPoint != c) // Don't count yourself!!
+  def changeSeatPart1: Ferry => Seat => Seat =
+    (f: Ferry) =>
+      (seat: Seat) => {
+        val candidatePoints =
+          generateNeighbours(seat.asPoint)
+            .filter(n => n._1 < f.width && n._2 < f.length)
+            .filter(c => seat.asPoint != c) // Don't count yourself!!
 
-    val candidateSeats = candidatePoints.map(p => f.getSeatAtPoint(p))
+        val candidateSeats = candidatePoints.map(p => f.getSeatAtPoint(p))
 
-    val candidates = candidateSeats.count(_.state == State.Taken)
+        val candidates = candidateSeats.count(_.state == State.Taken)
 
-    applySeatRules(seat, candidates, tolerance)
-  }
+        applySeatRules(seat, candidates, 4)
+      }
 
-  def changeSeatPart2(seat: Seat, f: Ferry): Seat = {
-    val deltas = Seq((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1))
-    val candidateSeats = deltas.map(findFirstSeatInDirection(seat, _, f)).collect { case Some(s) => s }
-    val candidates = candidateSeats.count(_.state == State.Taken)
+  def changeSeatPart2: Ferry => Seat => Seat =
+    (f: Ferry) =>
+      (seat: Seat) => {
+        val deltas = Seq((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1))
 
-    applySeatRules(seat, candidates, 5)
-  }
+        if (seat.state == State.Floor) seat
+        else {
+          val candidateSeats = deltas.map(findFirstSeatInDirection(seat, _, f)).collect { case Some(s) => s }
+          val candidates = candidateSeats.count(_.state == State.Taken)
+
+          applySeatRules(seat, candidates, 5)
+        }
+      }
 
   def findFirstSeatInDirection(seat: Seat, delta: (Int, Int), f: Ferry): Option[Seat] =
     Iterator
-      .iterate(Some(seat))(s => {
-        Try(nextPoint(s, delta, f)).getOrElse(None)
-      })
-      .find(s => (s.asPoint != seat.asPoint && s.state != State.Floor))
+      .iterate(Option.apply(seat)) {
+        case Some(seat) => Try(nextPoint(seat, delta, f)).toOption
+        case None => None
+      }
+      .find(os =>
+        os match {
+          case Some(s) => s.asPoint != seat.asPoint && s.state != State.Floor
+          case None => true
+        }
+      )
+      .flatten
 
   def nextPoint(s: Seat, delta: (Int, Int), f: Ferry): Seat =
     f.getSeatAtPoint(
@@ -187,6 +203,20 @@ object TestData {
       |#LLLLLLLL#
       |#.LLLLLL.L
       |#.#LLLL.##""".stripMargin
+      .split(System.lineSeparator)
+      .toList
+
+  val roundTwoPart2 =
+    """#.LL.LL.L#
+      |#LLLLLL.LL
+      |L.L.L..L..
+      |LLLL.LL.LL
+      |L.LL.LL.LL
+      |L.LLLLL.LL
+      |..L.L.....
+      |LLLLLLLLL#
+      |#.LLLLLL.L
+      |#.LLLLL.L#""".stripMargin
       .split(System.lineSeparator)
       .toList
 }
