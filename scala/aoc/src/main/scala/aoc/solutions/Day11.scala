@@ -9,6 +9,8 @@ import cats._
 import cats.implicits._
 import cats.kernel.Eq
 import io.scalaland.catnip._
+
+import scala.util.Try
 //import aoc.utils.Stuff._
 import scala.io.Source
 
@@ -16,24 +18,31 @@ object Day11 extends App {
   import Data._
   val input = Source.fromFile("files/11.txt").getLines().toList
 
-//  val data = TestData.small
-  val data = input
+  val data = TestData.small
+//  val data = input
   val start = parseInput(data)
 //  println(start)
 
-  val p1 = part1
-  println(p1.countOccupied)
+//  val p1 = part1
+  val p2 = part2
+//  println(p1.countOccupied)
+  println(p2.countOccupied)
 
-  def part1 =
+//  def part1: Ferry = iterate(changeSeatPart1(_, start))
+
+  def part2: Ferry = iterate(changeSeatPart2(_, start))
+
+  def iterate(stepFn: Seat => Seat): Ferry =
     Iterator
-      .iterate(Recur(start, start.mapSeats(changeSeat(_, start)))) { r =>
-        Recur(r.next, r.next.mapSeats(changeSeat(_, r.next)))
+      .iterate(Recur(start, start.mapSeats(stepFn))) { r =>
+        println(r.next)
+        Recur(r.next, r.next.mapSeats(changeSeatPart1(_, r.next)))
       }
       .find(f => f.last === f.next)
       .get
       .last
 
-  def changeSeat(seat: Seat, f: Ferry): Seat = {
+  def changeSeatPart1(seat: Seat, f: Ferry, tolerance: Int = 4): Seat = {
     val candidatePoints =
       generateNeighbours(seat.asPoint)
         .filter(n => n._1 < f.width && n._2 < f.length)
@@ -43,12 +52,35 @@ object Day11 extends App {
 
     val candidates = candidateSeats.count(_.state == State.Taken)
 
+    applySeatRules(seat, candidates, tolerance)
+  }
+
+  def changeSeatPart2(seat: Seat, f: Ferry): Seat = {
+    val deltas = Seq((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1))
+    val candidateSeats = deltas.map(findFirstSeatInDirection(seat, _, f)).collect { case Some(s) => s }
+    val candidates = candidateSeats.count(_.state == State.Taken)
+
+    applySeatRules(seat, candidates, 5)
+  }
+
+  def findFirstSeatInDirection(seat: Seat, delta: (Int, Int), f: Ferry): Option[Seat] =
+    Iterator
+      .iterate(Some(seat))(s => {
+        Try(nextPoint(s, delta, f)).getOrElse(None)
+      })
+      .find(s => (s.asPoint != seat.asPoint && s.state != State.Floor))
+
+  def nextPoint(s: Seat, delta: (Int, Int), f: Ferry): Seat =
+    f.getSeatAtPoint(
+      s.asPoint.bimap(x => x + delta._1, y => y + delta._2)
+    )
+
+  def applySeatRules(seat: Seat, candidates: Int, tolerance: Int): Seat =
     (seat.state, candidates) match {
       case (State.Empty, x) if x == 0 => seat.copy(state = State.Taken)
-      case (State.Taken, x) if x >= 4 => seat.copy(state = State.Empty)
+      case (State.Taken, x) if x >= tolerance => seat.copy(state = State.Empty)
       case _ => seat
     }
-  }
 
   def parseInput(lines: List[String]): Ferry =
     Ferry(lines.zipWithIndex.foldLeft(Vector[Seat]())((acc, s) => {
@@ -97,8 +129,7 @@ object Data {
 
     def getSeatAtPoint(p: (Int, Int)) = {
       val index = (p._2 * width) + p._1
-      val out = seats(index)
-      out
+      seats(index)
     }
 
     override def toString: String = {
