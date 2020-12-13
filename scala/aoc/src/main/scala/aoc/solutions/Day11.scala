@@ -25,9 +25,13 @@ object Day11 extends App {
 //  println(start)
 
 //  val p1 = part1
-  val p2 = part2
+//  val p2 = part2
 //  println(p1.countOccupied)
-  println(p2.countOccupied)
+//  println(p2.countOccupied)
+
+  val eight = parseInput(TestData.eightEmpty)
+  val testSeat = eight.seats.find(_.state == State.Empty).get
+  changeSeatPart2.apply(eight).apply(testSeat)
 
   def part1: Ferry = iterate(changeSeatPart1, start)
 
@@ -53,7 +57,7 @@ object Day11 extends App {
 
         val candidateSeats = candidatePoints.map(p => f.getSeatAtPoint(p))
 
-        val candidates = candidateSeats.count(_.state == State.Taken)
+        val candidates = candidateSeats.sequence.getOrElse(List()).count(_.state == State.Taken)
 
         applySeatRules(seat, candidates, 4)
       }
@@ -75,18 +79,24 @@ object Day11 extends App {
   def findFirstSeatInDirection(seat: Seat, delta: (Int, Int), f: Ferry): Option[Seat] =
     Iterator
       .iterate(Option.apply(seat)) {
-        case Some(seat) => Try(nextPoint(seat, delta, f)).toOption
+        case Some(ns) => {
+          println(s"find ${seat.asPoint} for delta $delta")
+          Try(nextPoint(ns, delta, f)).toOption.flatten
+        }
         case None => None
       }
       .find(os =>
         os match {
-          case Some(s) => s.asPoint != seat.asPoint && s.state != State.Floor
+          case Some(s) => {
+            println(s"find cond $s")
+            s.asPoint != seat.asPoint && s.state != State.Floor
+          }
           case None => true
         }
       )
       .flatten
 
-  def nextPoint(s: Seat, delta: (Int, Int), f: Ferry): Seat =
+  def nextPoint(s: Seat, delta: (Int, Int), f: Ferry): Option[Seat] =
     f.getSeatAtPoint(
       s.asPoint.bimap(x => x + delta._1, y => y + delta._2)
     )
@@ -143,9 +153,17 @@ object Data {
     val width = seats.maxBy(_.x).x + 1
     val length = seats.maxBy(_.y).y + 1
 
-    def getSeatAtPoint(p: (Int, Int)) = {
+    def getSeatAtPoint(p: (Int, Int)): Option[Seat] = {
       val index = (p._2 * width) + p._1
-      seats(index)
+      println(s"seat at point $p with index $index")
+
+      if (index < 0 || p._1 >= width && p._2 >= length) {
+        println("out of range")
+        None
+      }
+      else {
+        Some(seats(index))
+      }
     }
 
     override def toString: String = {
@@ -217,6 +235,37 @@ object TestData {
       |LLLLLLLLL#
       |#.LLLLLL.L
       |#.LLLLL.L#""".stripMargin
+      .split(System.lineSeparator)
+      .toList
+
+  val eightEmpty =
+    """.......#.
+      |...#.....
+      |.#.......
+      |.........
+      |..#L....#
+      |....#....
+      |.........
+      |#........
+      |...#.....""".stripMargin
+      .split(System.lineSeparator)
+      .toList
+
+  val countOneExample =
+    """.............
+      |.L.L.#.#.#.#.
+      |.............""".stripMargin
+      .split(System.lineSeparator)
+      .toList
+
+  val noneFound =
+    """.##.##.
+      |#.#.#.#
+      |##...##
+      |...L...
+      |##...##
+      |#.#.#.#
+      |.##.##.""".stripMargin
       .split(System.lineSeparator)
       .toList
 }
