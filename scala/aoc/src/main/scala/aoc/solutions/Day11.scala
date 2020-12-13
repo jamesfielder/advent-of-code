@@ -9,29 +9,21 @@ import cats._
 import cats.implicits._
 import cats.kernel.Eq
 import io.scalaland.catnip._
-
-import scala.None
 import scala.util.Try
-//import aoc.utils.Stuff._
 import scala.io.Source
 
 object Day11 extends App {
   import Data._
   val input = Source.fromFile("files/11.txt").getLines().toList
 
-  val data = TestData.small
-//  val data = input
+//  val data = TestData.small
+  val data = input
   val start = parseInput(data)
-//  println(start)
 
-//  val p1 = part1
-//  val p2 = part2
-//  println(p1.countOccupied)
-//  println(p2.countOccupied)
-
-  val eight = parseInput(TestData.eightEmpty)
-  val testSeat = eight.seats.find(_.state == State.Empty).get
-  changeSeatPart2.apply(eight).apply(testSeat)
+  val p1 = part1
+  val p2 = part2
+  println(p1.countOccupied)
+  println(p2.countOccupied)
 
   def part1: Ferry = iterate(changeSeatPart1, start)
 
@@ -40,7 +32,6 @@ object Day11 extends App {
   def iterate(stepFn: Ferry => Seat => Seat, start: Ferry): Ferry =
     Iterator
       .iterate(Recur(start, start.mapSeats(stepFn.apply(start)))) { r =>
-        println(r.next)
         Recur(r.next, r.next.mapSeats(stepFn.apply(r.next)))
       }
       .find(f => f.last === f.next)
@@ -79,27 +70,21 @@ object Day11 extends App {
   def findFirstSeatInDirection(seat: Seat, delta: (Int, Int), f: Ferry): Option[Seat] =
     Iterator
       .iterate(Option.apply(seat)) {
-        case Some(ns) => {
-          println(s"find ${seat.asPoint} for delta $delta")
-          Try(nextPoint(ns, delta, f)).toOption.flatten
-        }
+        case Some(ns) => Try(nextPoint(ns, delta, f)).toOption.flatten
         case None => None
       }
       .find(os =>
         os match {
-          case Some(s) => {
-            println(s"find cond $s")
-            s.asPoint != seat.asPoint && s.state != State.Floor
-          }
+          case Some(s) => s.asPoint != seat.asPoint && s.state != State.Floor
           case None => true
         }
       )
       .flatten
 
-  def nextPoint(s: Seat, delta: (Int, Int), f: Ferry): Option[Seat] =
-    f.getSeatAtPoint(
-      s.asPoint.bimap(x => x + delta._1, y => y + delta._2)
-    )
+  def nextPoint(s: Seat, delta: (Int, Int), f: Ferry): Option[Seat] = {
+    val next = (s.x + delta._1, s.y + delta._2)
+    f.getSeatAtPoint(next)
+  }
 
   def applySeatRules(seat: Seat, candidates: Int, tolerance: Int): Seat =
     (seat.state, candidates) match {
@@ -155,16 +140,15 @@ object Data {
 
     def getSeatAtPoint(p: (Int, Int)): Option[Seat] = {
       val index = (p._2 * width) + p._1
-      println(s"seat at point $p with index $index")
 
-      if (index < 0 || p._1 >= width && p._2 >= length) {
-        println("out of range")
-        None
-      }
+      if (!inRange(p)) None
       else {
         Some(seats(index))
       }
     }
+
+    def inside(lower: Int = 0, upper: Int, value: Int): Boolean = value >= lower && value < upper
+    def inRange(p: (Int, Int)): Boolean = inside(0, width, p._1) && inside(0, length, p._2)
 
     override def toString: String = {
       seats
